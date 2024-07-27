@@ -7,6 +7,7 @@ import (
 	"net/http"
 
 	"github.com/gockey/data"
+	"github.com/gockey/data/models"
 	"github.com/gockey/util"
 	"github.com/gockey/nhl_scraper"
 )
@@ -62,7 +63,7 @@ func postPlayers(c *gin.Context) {
 	--data '{"id": "7", "name": "William Nylander", "position": "F", "professional_team_id": "TOR", "fantasy_team_id": "1", "salary": 11500000}'
 	*/
 
-	var newPlayer data.Player
+	var newPlayer models.Player
 
 	// Call BindJSON to bind the received JSON to newPlayer -- verify it is of `player` shape
 	if err := c.BindJSON(&newPlayer); err != nil {
