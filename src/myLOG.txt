@@ -1,7 +1,0 @@
-INFO: 2024/07/26 17:27:47 main.go:58: GET Request for /players
-INFO: 2024/07/26 17:32:35 main.go:63: GET Request for /players
-ERROR: 2024/07/26 17:32:35 main.go:70: Unable to marshall this request into a player struct
-INFO: 2024/07/26 17:33:18 main.go:63: GET Request for /players
-INFO: 2024/07/26 17:33:18 main.go:75: Successfully added newPlayer:  William Nylander
-INFO: 2024/07/26 17:35:09 main.go:58: GET Request for /players
-INFO: 2024/07/26 17:41:13 main.go:62: GET Request for /players
