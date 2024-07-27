@@ -3,8 +3,8 @@ kind: Config
 
 build:
   artifacts:
-    - image: docker.io/russellcain/k8-gockey
-    - image: docker.io/russellcain/k8-gockey-data-migration
+    - image: docker.io/rustycain/k8-gockey
+    - image: docker.io/rustycain/k8-gockey-data-migration
       docker:
         dockerfile: ./Dockerfile
   local:
@@ -18,11 +18,11 @@ deploy:
       install: ["--timeout", "15m"]
     releases:
     - name: test
-      chartPath: helm/k8-gockey
+      chartPath: k8-gockey
       wait: true
       artifactOverrides:
-        skaffoldImage: docker.io/russellcain/k8-gockey
-        migration.skaffoldImage: docker.io/russellcain/k8-gockey-data-migration
+        skaffoldImage: docker.io/rustycain/k8-gockey
+        migration.skaffoldImage: docker.io/rustycain/k8-gockey-data-migration
       setValueTemplates:
         skaffold: true
         image.pullPolicy: Never
@@ -39,5 +39,5 @@ portForward:
 - resourceType: deployment
   resourceName: test-k8-gockey
   namespace: default
-  port: 8081
-  localPort: 8081
+  port: 8080
+  localPort: 8080
