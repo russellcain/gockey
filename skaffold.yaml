@@ -6,7 +6,7 @@ build:
     - image: docker.io/rustycain/k8-gockey
     - image: docker.io/rustycain/k8-gockey-data-migration
       docker:
-        dockerfile: ./Dockerfile
+        dockerfile: ./migrations/Dockerfile
   local:
     push: false
     concurrency: 1
