@@ -14,3 +14,8 @@ kubectl.sha256
 *.db
 
 node_modules
+
+.parcel-cache
+fe/dist
+
+main

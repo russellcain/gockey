@@ -12,17 +12,6 @@ import (
 	"github.com/gockey/util"
 )
 
-func RunServer(url string) {
-	if url == "" {
-		url = url
-	}
-	router := gin.Default()
-	router.GET("/players", getPlayers)
-	router.GET("/players/:id", getPlayerById)
-	router.POST("/players", postPlayers)
-	router.GET("/scrape", scrape)
-	router.Run(":2424")
-}
 
 func scrape(c *gin.Context) {
 	nhl_scraper.GetAPI()
