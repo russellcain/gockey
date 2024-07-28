@@ -11,8 +11,16 @@ var (
 	ErrorLog   *log.Logger
 )
 
+const LOG_FILE_PATH string = "gockey_logs.txt"
+
 func init() {
-	file, err := os.OpenFile("util/myLOG.txt", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0666)
+	f, err := os.Create(LOG_FILE_PATH)
+    if err != nil {
+        log.Fatal(err)
+    }
+    f.Close()
+
+	file, err := os.OpenFile(LOG_FILE_PATH, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0666)
 	if err != nil {
 		log.Fatal(err)
 	}
