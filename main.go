@@ -6,8 +6,8 @@ import (
 	"net/http"
 
 	// restful
-	"github.com/gin-gonic/gin"
 	"github.com/gin-contrib/static"
+	"github.com/gin-gonic/gin"
 
 	// internal
 	"github.com/gockey/api"

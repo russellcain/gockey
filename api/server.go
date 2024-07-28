@@ -4,7 +4,6 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-
 func SetupServer(router *gin.Engine) {
 	router.GET("/players", getPlayers)
 	router.GET("/players/:id", getPlayerById)

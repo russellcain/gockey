@@ -12,7 +12,6 @@ import (
 	"github.com/gockey/util"
 )
 
-
 func scrape(c *gin.Context) {
 	nhl_scraper.GetAPI()
 	c.Status(http.StatusNoContent)
