@@ -3,3 +3,19 @@ gockey_logs.txt
 
 .DS_Store
 kubectl.sha256
+
+*.test
+*.out
+.env
+*.exe
+*.exe~
+
+
+*.db
+
+node_modules
+
+.parcel-cache
+fe/dist
+
+main

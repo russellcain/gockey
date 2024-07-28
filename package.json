@@ -1,0 +1,11 @@
+{
+    "name": "gockey-fe",
+    "source": "fe/index.html",
+    "scripts": {
+        "start": "parcel",
+        "build": "parcel build  --dist-dir fe/dist"
+    },
+    "devDependencies": {
+        "parcel": "latest"
+    }
+}
