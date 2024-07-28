@@ -8,10 +8,9 @@ import (
 
 	"github.com/gockey/data"
 	"github.com/gockey/data/models"
-	"github.com/gockey/util"
 	"github.com/gockey/nhl_scraper"
+	"github.com/gockey/util"
 )
-
 
 func RunServer(url string) {
 	if url == "" {
