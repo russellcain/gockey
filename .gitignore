@@ -16,6 +16,9 @@ kubectl.sha256
 node_modules
 
 .parcel-cache
-fe/dist
-
+fe/dist/*
+dist/*
 main
+
+package-lock.json
+yarn.lock
