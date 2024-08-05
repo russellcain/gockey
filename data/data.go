@@ -2,6 +2,7 @@ package data
 
 import (
 	"database/sql"
+
 	"github.com/gockey/data/models"
 	"github.com/gockey/util"
 	_ "github.com/mattn/go-sqlite3"
@@ -23,7 +24,7 @@ type PlayerCursor struct {
 	// mu sync.Mutex
 }
 
-func NewPlayers() (*PlayerCursor, error) {
+func NewPlayersClient() (*PlayerCursor, error) {
 	db, err := sql.Open("sqlite3", db_file)
 	if err != nil {
 		util.ErrorLog.Println("Could not connect to the players.db")
@@ -76,12 +77,21 @@ func (curs *PlayerCursor) GetPlayersFromDB(offset int) ([]models.Player, error) 
 	return data, nil
 }
 
-// example players to vet shape
-var players = []models.Player{
-	{ID: 1, Name: "Auston Matthews", Position: "F", NHL_Team_ID: "TOR", Salary: 13250000},
-	{ID: 2, Name: "Nathan McKinnon", Position: "F", NHL_Team_ID: "COR", Salary: 12600000},
-	{ID: 3, Name: "Tyler Bertuzzi", Position: "F", NHL_Team_ID: "CHI", Salary: 5500000},
-	{ID: 4, Name: "Cale Makar", Position: "D", NHL_Team_ID: "COR", Salary: 9000000},
-	{ID: 5, Name: "Moritz Seider", Position: "D", NHL_Team_ID: "DET", Salary: 925000},
-	{ID: 6, Name: "Andrei Vasilevskiy", Position: "G", NHL_Team_ID: "TPA", Salary: 9500000},
+func (curs *PlayerCursor) GetPlayerByIdFromDB(id string) (models.Player, error) {
+	const sqlStatement string = `SELECT * FROM players WHERE id=$1;`
+
+	retrieved_player := models.Player{}
+	row := curs.db.QueryRow(sqlStatement, id)
+	switch err := row.Scan(&retrieved_player.ID, &retrieved_player.Name,
+		&retrieved_player.Position, &retrieved_player.NHL_Team_ID, &retrieved_player.Salary); err {
+		case sql.ErrNoRows:
+			util.InfoLog.Println("No rows were returned!")
+			return models.Player{}, sql.ErrNoRows
+		case nil:
+			return retrieved_player, nil
+		default:
+			util.ErrorLog.Println("Unexpected error in fetching a player by id?")
+			return models.Player{}, err
+	}
+	return models.Player{}, nil
 }

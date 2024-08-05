@@ -5,7 +5,7 @@ import (
 	"github.com/gockey/util"
 )
 
-var playersClient, err = NewPlayers()
+var playersClient, err = NewPlayersClient()
 
 func GetPlayers() ([]models.Player, error) {
 	players, err := playersClient.GetPlayersFromDB(0)
@@ -21,16 +21,12 @@ func (m *PlayerNotFoundErr) Error() string {
 	return "Player Not Found"
 }
 
+// query the player table by supplied id
 func GetPlayerById(id string) (models.Player, error) {
-	// grab the current players and loop until we get a match
-	player := models.Player{}
-	for _, player := range players {
-		if string(player.ID) == id {
-			util.InfoLog.Println("Found", player.ID, player.Name)
-			return player, nil
-		}
+	player, err := playersClient.GetPlayerByIdFromDB(id); if err != nil {
+		return models.Player{}, &PlayerNotFoundErr{}
 	}
-	return player, &PlayerNotFoundErr{}
+	return player, nil
 }
 
 func AddPlayer(newPlayer models.Player) int {

@@ -4,7 +4,7 @@ package models
 type Team struct {
 	ID         string   `json:"id"`
 	Name       string   `json:"name"`
-	Owner      string   `json:owner`
-	League     string   `json:"league"`
+	Owner      string   `json:"owner"`
+	League_ID  string   `json:"league_id"`
 	Player_IDs []string `json:"player_ids"`
 }
