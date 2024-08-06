@@ -23,7 +23,8 @@ func (m *PlayerNotFoundErr) Error() string {
 
 // query the player table by supplied id
 func GetPlayerById(id string) (models.Player, error) {
-	player, err := playersClient.GetPlayerByIdFromDB(id); if err != nil {
+	player, err := playersClient.GetPlayerByIdFromDB(id)
+	if err != nil {
 		return models.Player{}, &PlayerNotFoundErr{}
 	}
 	return player, nil

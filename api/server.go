@@ -5,8 +5,6 @@ import (
 )
 
 func SetupServer(router *gin.Engine) {
-	router.GET("/players", getPlayers)
-	router.GET("/players/:id", getPlayerById)
-	router.POST("/players", postPlayers)
-	router.GET("/scrape", scrape)
+	router.GET("/players", GetPlayers)
+	router.GET("/players/:id", GetPlayerById)
 }
