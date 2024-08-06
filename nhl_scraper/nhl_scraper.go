@@ -19,10 +19,11 @@ func add_player_to_db(player api.Player_resp, team_code string) {
 		NHL_Team_Code: team_code,
 		Name: player.FirstName.Value + string(' ') + player.LastName.Value,
 		Position: player.Position,
-		Salary: 0  // NOTE: we need to pull this in eventually, but let's init empty
+		Salary: 0,  // NOTE: we need to pull this in eventually, but let's init empty
 	}
 
 	var generated_id int = data.AddPlayer(wrapped_player)
+	util.InfoLog.Println("Successfully Inserted", generated_id)
 }
 
 
