@@ -21,7 +21,8 @@ var (
 func main() {
 	dist, _ := fs.Sub(fe, "fe/dist")
 	http.Handle("/", http.FileServer(http.FS(dist)))
-
+	// we should set up one db client here, right? vs per api request
+	// but also, we would need a way to thread it? does the db pool get auto-generated?
 	router := gin.Default()
 	router.Use(static.Serve("/", static.LocalFile("./fe/dist", false)))
 	api.SetupServer(router)

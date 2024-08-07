@@ -2,10 +2,11 @@ package data
 
 import (
 	"github.com/gockey/data/models"
+	"github.com/gockey/data/service"
 	"github.com/gockey/util"
 )
 
-var playersClient, err = NewPlayersClient()
+var playersClient, err = service.GetInitializedDBClient()
 
 func GetPlayers() ([]models.Player, error) {
 	players, err := playersClient.GetPlayersFromDB(0)
