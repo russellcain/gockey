@@ -4,7 +4,36 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+type RouteMethod struct {
+	Route  string
+	Method func(c *gin.Context)
+}
+
+var Routes = []RouteMethod{
+	{
+		Route:  "/players",
+		Method: GetPlayers,
+	},
+	{
+		Route:  "/players/:id",
+		Method: GetPlayerById,
+	},
+	{
+		Route:  "/leagues",
+		Method: GetLeagues,
+	},
+	{
+		Route:  "/league/:id/teams",
+		Method: GetTeams,
+	},
+	{
+		Route:  "/league/:id/teams/:team_id",
+		Method: GetTeamById,
+	},
+}
+
 func SetupServer(router *gin.Engine) {
-	router.GET("/players", GetPlayers)
-	router.GET("/players/:id", GetPlayerById)
+	for _, route := range Routes {
+		router.GET(route.Route, route.Method)
+	}
 }
