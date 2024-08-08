@@ -2,41 +2,49 @@ import React from 'react';
 import {
   createBrowserRouter,
   RouteObject,
-  RouterProvider
+  RouterProvider,
+  Link
 } from "react-router-dom";
 
+import PlayerPage from "./player/PlayerPage"
+import { Button } from '@mui/material';
 
-const pages: string[] = ['league', 'players', 'teams']
+let pages: RouteObject[] = [
+  {
+    path: '/league',
+    element: <h1>Welcome to the league page</h1>
+    },
+  {
+    path: '/players',
+    element: <PlayerPage />
+    },
+  {
+    path: '/teams',
+    element: <h1>Welcome to the teams page</h1>
+  },
+]
 
-let routes: RouteObject[] = pages.map((value) => {
-  return (
-    {
-      path: `/${value}`,
-      element: <h1>Welcome to {value} </h1>
-    }
-  )
-  }
-)
+pages = [{path: '', element: <h1>Welcome Home</h1>}, ...pages]
 
-routes = [{path: '', element: <h1>Welcome Home</h1>}, ...routes]
+const router = createBrowserRouter(pages)
 
-const router = createBrowserRouter(
-  routes
-)
 
-function PathButton(props): JSX.Element {
-  return <a href={props.path_name}>Visit {props.path_name}</a>;
+
+
+function PathButton(page: RouteObject): JSX.Element {
+  return <Button href={page.path} variant="contained" color="primary">
+      {page.path}
+    </Button>
 }
 
-let name: string = 'Rusty?'
 function RouterHandler(): React.JSX.Element {
   return (
     <>
-      <div>Here are some pages: </div>
-      <ul>
-        {pages.map((name, index) => (<PathButton key={index} path_name={name} />))}
-      </ul>
       <RouterProvider router={router} />
+        <div>Here are some pages: </div>
+        <ul>
+          {pages.map((page: RouteObject) => (<PathButton key={page.path} {...page} />))}
+        </ul>
     </>
   );
 }
