@@ -48,16 +48,17 @@ func (curs *DatabaseCursor) GetTeamsFromDatabase(league_id int) ([]models.Team, 
 
 // this view should include the players on the team, and requires a league id
 func (curs *DatabaseCursor) GetTeamByIdFromDB(id string) (models.Team, error) {
-	const fetchTeamQuery string = `SELECT * FROM players WHERE id=$1;`
+	const fetchTeamQuery string = `SELECT * FROM teams WHERE id=$1;`
 	const fetchPlayersQuery string = `
 		SELECT p.* FROM players p
-			join teams_players_ref tpr on p.id == tpr.player_id
-				and tpr.team_id=$1;`
+		join ref_table tpr
+		on p.id == tpr.player_id
+		where tpr.team_id=1;`
 
 	retrieved_team := models.Team{}
 	row := curs.db.QueryRow(fetchTeamQuery, id)
 	switch err := row.Scan(&retrieved_team.ID, &retrieved_team.Name,
-		&retrieved_team.Owner, &retrieved_team.Players); err {
+		&retrieved_team.Owner, &retrieved_team.League_ID); err {
 	case sql.ErrNoRows:
 		util.InfoLog.Println("No rows were returned!")
 	case nil:
@@ -73,17 +74,17 @@ func (curs *DatabaseCursor) GetTeamByIdFromDB(id string) (models.Team, error) {
 	}
 
 	defer rows.Close()
-	player := models.Player{}
+	players := []models.Player{}
 	for rows.Next() {
-		team := models.Team{}
-		err = rows.Scan(&team.ID, &team.Name, &team.Owner, &team.League_ID) // don't include players here
+		player := models.Player{}
+		err = rows.Scan(&player.ID, &player.Photo, &player.Name, &player.Position, &player.NHL_Team_Code, &player.NHL_Team_Name, &player.Salary) // don't include players here
 		if err != nil {
 			// then bail early and just show the data we have (not ideal)
-			return retrieved_team, nil
+			return retrieved_team, err
 		}
-		retrieved_team.Players = append(retrieved_team.Players, player)
+		players = append(players, player)
 	}
-
+	retrieved_team.Players = players
 	return retrieved_team, nil
 
 }

@@ -2,6 +2,7 @@ package db
 
 import (
 	"database/sql"
+	"fmt"
 
 	"github.com/gockey/data/models"
 	"github.com/gockey/util"
@@ -47,20 +48,40 @@ func (curs *DatabaseCursor) GetLeaguesFromDB(offset int) ([]models.League, error
 }
 
 // This is akin to a method to list teams
-func (curs *DatabaseCursor) GetLeagueByIdFromDB(id string) (models.Player, error) {
-	const sqlStatement string = `SELECT * FROM players WHERE id=$1;`
-
-	retrieved_player := models.Player{}
+func (curs *DatabaseCursor) GetLeagueByIdFromDB(id string) (models.League, error) {
+	const sqlStatement string = `SELECT * FROM leagues WHERE id=$1;`
+	const getTeamIds string = `SELECT * FROM teams WHERE league_id=$1;`
+	retrieved_league := models.League{}
 	row := curs.db.QueryRow(sqlStatement, id)
-	switch err := row.Scan(&retrieved_player.ID, &retrieved_player.Name,
-		&retrieved_player.Position, &retrieved_player.NHL_Team_Code, &retrieved_player.Salary); err {
+	switch err := row.Scan(&retrieved_league.ID, &retrieved_league.Name); err {
 	case sql.ErrNoRows:
 		util.InfoLog.Println("No rows were returned!")
-		return models.Player{}, sql.ErrNoRows
+		return models.League{}, sql.ErrNoRows
 	case nil:
-		return retrieved_player, nil
+		fmt.Println("LOOK WE GOT A LEAGUE", retrieved_league)
+
+		// this means we are humming! let's fetch the team objects now
+		rows, err := curs.db.Query(getTeamIds, id); if err != nil {
+			util.ErrorLog.Println("Was able to fetch the league, but not the teams", err)
+			return retrieved_league, err
+		}
+		defer rows.Close()
+		teams := []models.Team{}
+		for rows.Next() {
+			team := models.Team{}
+			team.Players = []models.Player{} // init empty value
+			err = rows.Scan(&team.ID, &team.Name, &team.Owner, &team.League_ID); if err != nil {
+				util.ErrorLog.Println("Was able to fetch the league, choked on an individual team", err)
+				return retrieved_league, err
+			}
+			teams = append(teams, team)
+		}
+		retrieved_league.Teams = teams
+		fmt.Println("LOOK WE GOT ALL THE TEAMS?", teams)
+		return retrieved_league, nil
+
 	default:
-		util.ErrorLog.Println("Unexpected error in fetching a player by id?")
-		return models.Player{}, err
+		util.ErrorLog.Println("Unexpected error in fetching a league by id?", err)
+		return models.League{}, err
 	}
 }

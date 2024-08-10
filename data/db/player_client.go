@@ -9,7 +9,7 @@ import (
 )
 
 func (curs *DatabaseCursor) AddPlayerToDB(player models.Player) (int, error) {
-	res, err := curs.db.Exec("INSERT INTO players VALUES(?,?,?,?,?)", player.ID, player.Name, player.Position, player.NHL_Team_Code, player.Salary)
+	res, err := curs.db.Exec("INSERT INTO players (id, name, image_url, position, nhl_team_code, nhl_team_name, salary)VALUES(?,?,?,?,?)", player.ID, player.Photo, player.Name, player.Position, player.NHL_Team_Code, player.NHL_Team_Name, player.Salary)
 	if err != nil {
 		util.ErrorLog.Println("Unable to insert player into table")
 		return 0, err
@@ -33,17 +33,25 @@ func (curs *DatabaseCursor) GetPlayersFromDB(offset int) ([]models.Player, error
 	}
 
 	defer rows.Close()
-	data := []models.Player{}
+	players := []models.Player{}
 	for rows.Next() {
-		i := models.Player{}
-		err = rows.Scan(&i.ID, &i.Name, &i.Position, &i.NHL_Team_Code, &i.Salary)
+		retrieved_player := models.Player{}
+		err = rows.Scan(
+			&retrieved_player.ID,
+			&retrieved_player.Photo,
+			&retrieved_player.Name,
+			&retrieved_player.Position,
+			&retrieved_player.NHL_Team_Code,
+			&retrieved_player.NHL_Team_Name,
+			&retrieved_player.Salary,
+		)
 		if err != nil {
 			return nil, err
 		}
-		data = append(data, i)
+		players = append(players, retrieved_player)
 	}
 
-	return data, nil
+	return players, nil
 }
 
 func (curs *DatabaseCursor) GetPlayerByIdFromDB(id string) (models.Player, error) {
@@ -51,8 +59,14 @@ func (curs *DatabaseCursor) GetPlayerByIdFromDB(id string) (models.Player, error
 
 	retrieved_player := models.Player{}
 	row := curs.db.QueryRow(sqlStatement, id)
-	switch err := row.Scan(&retrieved_player.ID, &retrieved_player.Name,
-		&retrieved_player.Position, &retrieved_player.NHL_Team_Code, &retrieved_player.Salary); err {
+	switch err := row.Scan(
+		&retrieved_player.ID,
+		&retrieved_player.Photo,
+		&retrieved_player.Name,
+		&retrieved_player.Position,
+		&retrieved_player.NHL_Team_Code,
+		&retrieved_player.NHL_Team_Name,
+		&retrieved_player.Salary); err {
 	case sql.ErrNoRows:
 		util.InfoLog.Println("No rows were returned!")
 		return models.Player{}, sql.ErrNoRows

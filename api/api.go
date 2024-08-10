@@ -52,7 +52,7 @@ This is equivalent to a getting a league by id
 func GetTeams(c *gin.Context) {
 	// Method to handle and return http-ready player data.
 	// TODO: the `players` value will be replaced by a service-level data collection response
-	util.InfoLog.Println("GET Request for /players")
+	util.InfoLog.Println("GET Request for /teams")
 	id := c.Param("id")
 	teams, err := service.GetLeagueById(id)
 	if err != nil {

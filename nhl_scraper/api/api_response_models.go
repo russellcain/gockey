@@ -57,3 +57,41 @@ type team_resp struct {
 type Api_resp struct {
 	Data []team_resp `json:"data"`
 }
+
+var TriCodeToTeamName map[string]string = map[string]string{
+	"ANA": "Anaheim Ducks",
+	"BOS": "Boston Bruins",
+	"BUF": "Buffalo Sabres",
+	"CAR": "Calgary Flames",
+	"CBJ": "Carolina Hurricanes",
+	"CGY": "Chicago Blackhawks",
+	"CHI": "Colorado Avalanche",
+	"COL": "Columbus Blue Jackets",
+	"DAL": "Dallas Stars",
+	"DET": "Detroit Red Wings",
+	"EDM": "Edmonton Oilers",
+	"FLA": "Florida Panthers",
+	"LAK": "Los Angeles Kings",
+	"MIN": "Minnesota Wild",
+	"MTL": "Montreal Canadiens",
+	"NJD": "Nashville Predators",
+	"NSH": "New Jersey Devils",
+	"NYI": "New York Islanders",
+	"NYR": "New York Rangers",
+	"OTT": "Ottawa Senators",
+	"PHI": "Philadelphia Flyers",
+	"PIT": "Pittsburgh Penguins",
+	"SEA": "San Jose Sharks",
+	"SJS": "Seattle Kraken",
+	"STL": "St Louis Blues",
+	"TBL": "Tampa Bay Lightning",
+	"TOR": "Toronto Maple Leafs",
+	"UTA": "Utah Hockey Club",
+	"VAN": "Vancouver Canucks",
+	"VGK": "Vegas Golden Knights",
+	"WPG": "Washington Capitals",
+	"WSH": "Winnipeg Jets",
+}
+func GetTeamNameByTricode(tricode string) string {
+	return tricode
+}

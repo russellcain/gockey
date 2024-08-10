@@ -7,7 +7,7 @@ import (
 const TABLE_PLAYER_NAME string = "players"
 const TABLE_TEAM_NAME string = "teams"
 const TABLE_LEAGUE_NAME string = "leagues"
-const TABLE_TEAM_PLAYER_REF string = "team_player_ref"
+const REF_TABLE string = "ref_table"
 
 type DB_Init_Script struct {
 	Label  string
@@ -45,8 +45,10 @@ var createPlayerTable string = fmt.Sprintf(`
 	CREATE TABLE IF NOT EXISTS %s (
 		id INTEGER NOT NULL PRIMARY KEY,
 		name VARCHAR(255) NOT NULL,
+		image_url VARCHAR(40),
 		position VARCHAR(40),
 		nhl_team_code VARCHAR(40),
+		nhl_team_name VARCHAR(40),
 		salary INTEGER
 	);
 `, TABLE_PLAYER_NAME)
@@ -63,12 +65,14 @@ var createTeamTable string = fmt.Sprintf(`
 
 var createPlayerToTeamTable string = fmt.Sprintf(`
 	CREATE TABLE IF NOT EXISTS %s (
+		league_id INTEGER NOT NULL,
 		team_id INTEGER NOT NULL,
 		player_id INTEGER NOT NULL,
+		FOREIGN KEY(league_id) REFERENCES %s(id),
 		FOREIGN KEY(team_id) REFERENCES %s(id),
 		FOREIGN KEY(player_id) REFERENCES %s(id)
 	);
-`, TABLE_TEAM_PLAYER_REF, TABLE_TEAM_NAME, TABLE_PLAYER_NAME)
+`, REF_TABLE, TABLE_LEAGUE_NAME, TABLE_TEAM_NAME, TABLE_PLAYER_NAME)
 
 var createLeagueTable string = fmt.Sprintf(`
 	CREATE TABLE IF NOT EXISTS %s (

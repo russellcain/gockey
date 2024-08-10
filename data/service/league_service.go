@@ -14,12 +14,12 @@ func GetLeagues() ([]models.League, error) {
 }
 
 // query the player table by supplied id
-func GetLeagueById(id string) (models.Player, error) {
-	player, err := db_client.GetLeagueByIdFromDB(id)
+func GetLeagueById(id string) (models.League, error) {
+	league, err := db_client.GetLeagueByIdFromDB(id)
 	if err != nil {
-		return models.Player{}, &PlayerNotFoundErr{}
+		return models.League{}, err
 	}
-	return player, nil
+	return league, nil
 }
 
 func AddLeague(newLeague models.League) int {

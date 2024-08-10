@@ -17,7 +17,7 @@ func GetTeams(league_id int) ([]models.Team, error) {
 func GetTeamById(id string) (models.Team, error) {
 	team, err := db_client.GetTeamByIdFromDB(id)
 	if err != nil {
-		return models.Team{}, &PlayerNotFoundErr{}
+		return models.Team{}, err
 	}
 	return team, nil
 }
