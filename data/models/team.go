@@ -6,5 +6,5 @@ type Team struct {
 	Name      string   `json:"name"`
 	Owner     string   `json:"owner"`
 	League_ID string   `json:"league_id"`
-	Players   []Player `json:"player_ids"`
+	Players   []Player `json:"players"`
 }

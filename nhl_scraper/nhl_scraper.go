@@ -8,8 +8,8 @@ import (
 	"os"
 
 	"github.com/gockey/data/models"
-	"github.com/gockey/data/service"
 	"github.com/gockey/nhl_scraper/api"
+	"github.com/gockey/service"
 	"github.com/gockey/util"
 )
 

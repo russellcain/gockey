@@ -58,8 +58,6 @@ func (curs *DatabaseCursor) GetLeagueByIdFromDB(id string) (models.League, error
 		util.InfoLog.Println("No rows were returned!")
 		return models.League{}, sql.ErrNoRows
 	case nil:
-		fmt.Println("LOOK WE GOT A LEAGUE", retrieved_league)
-
 		// this means we are humming! let's fetch the team objects now
 		rows, err := curs.db.Query(getTeamIds, id)
 		if err != nil {

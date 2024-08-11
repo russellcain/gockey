@@ -23,11 +23,11 @@ var Routes = []RouteMethod{
 		Method: GetLeagues,
 	},
 	{
-		Route:  "/league/:id/teams",
+		Route:  "/league/:league_id/teams",
 		Method: GetTeams,
 	},
 	{
-		Route:  "/league/:id/teams/:team_id",
+		Route:  "/league/:league_id/teams/:team_id",
 		Method: GetTeamById,
 	},
 }

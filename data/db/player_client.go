@@ -9,7 +9,7 @@ import (
 )
 
 func (curs *DatabaseCursor) AddPlayerToDB(player models.Player) (int, error) {
-	res, err := curs.db.Exec("INSERT INTO players (id, name, photo, position, nhl_team_code, salary)VALUES(?,?,?,?,?,?)", player.ID, player.Name, player.Photo, player.Position, player.NHL_Team_Code, player.Salary)
+	res, err := curs.db.Exec("INSERT INTO players (id, name, photo, position, nhl_team_code, nhl_team_name, salary)VALUES(?,?,?,?,?,?,?)", player.ID, player.Name, player.Photo, player.Position, player.NHL_Team_Code, player.NHL_Team_Name, player.Salary)
 	if err != nil {
 		util.ErrorLog.Println("Unable to insert player into table", err)
 		return 0, err

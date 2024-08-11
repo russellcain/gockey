@@ -47,34 +47,35 @@ func (curs *DatabaseCursor) GetTeamsFromDatabase(league_id int) ([]models.Team, 
 }
 
 // this view should include the players on the team, and requires a league id
-func (curs *DatabaseCursor) GetTeamByIdFromDB(id string) (models.Team, error) {
-	const fetchTeamQuery string = `SELECT * FROM teams WHERE id=$1;`
+func (curs *DatabaseCursor) GetTeamByIdFromDB(team_id string, league_id string) (models.Team, error) {
+	const fetchTeamQuery string = `SELECT * FROM teams WHERE id=$1 and league_id=$2;`
 	const fetchPlayersQuery string = `
 		SELECT p.* FROM players p
 		join ref_table tpr
 		on p.id == tpr.player_id
-		where tpr.team_id=1
+		where tpr.team_id=$1
+		and tpr.league_id=$2
 		and status='active';`
 
 	retrieved_team := models.Team{}
-	row := curs.db.QueryRow(fetchTeamQuery, id)
+	row := curs.db.QueryRow(fetchTeamQuery, team_id, league_id)
 	switch err := row.Scan(&retrieved_team.ID, &retrieved_team.Name,
 		&retrieved_team.Owner, &retrieved_team.League_ID); err {
 	case sql.ErrNoRows:
-		util.InfoLog.Println("No rows were returned!")
+		util.InfoLog.Println("No rows were returned! This mean this team doesn't yet exist; don't grab players")
+		return models.Team{}, nil
 	case nil:
 		// sick, now let's load the players
 	default:
 		util.ErrorLog.Println("Unexpected error in fetching a team by id?")
 	}
 
-	rows, err := curs.db.Query(fetchPlayersQuery, id) // so i dont think we need to limit
+	rows, err := curs.db.Query(fetchPlayersQuery, team_id, league_id) // so i dont think we need to limit
 	if err != nil {
-		util.ErrorLog.Println("Unable to fetch players on team:", id)
+		util.ErrorLog.Println("Unable to fetch players on team:", team_id)
 		return retrieved_team, err
 	}
 
-	defer rows.Close()
 	players := []models.Player{}
 	for rows.Next() {
 		player := models.Player{}
@@ -85,6 +86,8 @@ func (curs *DatabaseCursor) GetTeamByIdFromDB(id string) (models.Team, error) {
 		}
 		players = append(players, player)
 	}
+	defer rows.Close()
+
 	retrieved_team.Players = players
 	return retrieved_team, nil
 
