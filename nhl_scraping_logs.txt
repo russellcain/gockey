@@ -1,8 +1,0 @@
-INFO: 2024/08/11 09:32:11 database_client.go:58: League is ready to get humming
-INFO: 2024/08/11 09:32:11 database_client.go:58: Team is ready to get humming
-INFO: 2024/08/11 09:32:11 database_client.go:58: Player is ready to get humming
-INFO: 2024/08/11 09:32:11 database_client.go:58: PlayerToTeam is ready to get humming
-INFO: 2024/08/11 09:32:12 team_client.go:65: No rows were returned! This mean this team doesn't yet exist; don't grab players
-ERROR: 2024/08/11 09:32:12 api.go:71: Unable to retrieve team by id
-INFO: 2024/08/11 09:32:20 api.go:55: GET Request for /teams
-INFO: 2024/08/11 09:33:03 api.go:55: GET Request for /teams

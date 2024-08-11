@@ -22,3 +22,5 @@ main
 
 package-lock.json
 yarn.lock
+
+*_logs.txt

@@ -40,7 +40,8 @@ func main() {
 	http.Handle("/", http.FileServer(http.FS(dist)))
 	// we should set up one db client here, right? vs per api request
 	// but also, we would need a way to thread it? does the db pool get auto-generated?
-	db.GetInitializedDBClient()
+	db_client, _ := db.GetInitializedDBClient()
+	defer db.CloseDBCursor(db_client) // confirm we tidy this up once we shut down our route
 	router := gin.Default()
 	router.Use(CORSMiddleware())
 	router.Use(static.Serve("/", static.LocalFile("./fe/dist", false)))

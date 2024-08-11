@@ -2,6 +2,7 @@ package db
 
 import (
 	"database/sql"
+	"fmt"
 
 	"github.com/gockey/data/constants"
 	"github.com/gockey/util"
@@ -44,6 +45,12 @@ func NewDatabaseClient() (*DatabaseCursor, error) {
 	return &DatabaseCursor{
 		db: db,
 	}, nil
+}
+
+func CloseDBCursor(curs *DatabaseCursor) error {
+	util.InfoLog.Println("Shutting down database cursor now")
+	fmt.Println("Shutting down database cursor now")
+	return curs.db.Close()
 }
 
 func (curs *DatabaseCursor) InitializeReqTables() []error {
