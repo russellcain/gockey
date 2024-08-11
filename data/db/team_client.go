@@ -53,7 +53,8 @@ func (curs *DatabaseCursor) GetTeamByIdFromDB(id string) (models.Team, error) {
 		SELECT p.* FROM players p
 		join ref_table tpr
 		on p.id == tpr.player_id
-		where tpr.team_id=1;`
+		where tpr.team_id=1
+		and status='active';`
 
 	retrieved_team := models.Team{}
 	row := curs.db.QueryRow(fetchTeamQuery, id)

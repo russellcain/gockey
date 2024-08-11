@@ -61,7 +61,8 @@ func (curs *DatabaseCursor) GetLeagueByIdFromDB(id string) (models.League, error
 		fmt.Println("LOOK WE GOT A LEAGUE", retrieved_league)
 
 		// this means we are humming! let's fetch the team objects now
-		rows, err := curs.db.Query(getTeamIds, id); if err != nil {
+		rows, err := curs.db.Query(getTeamIds, id)
+		if err != nil {
 			util.ErrorLog.Println("Was able to fetch the league, but not the teams", err)
 			return retrieved_league, err
 		}
@@ -70,7 +71,8 @@ func (curs *DatabaseCursor) GetLeagueByIdFromDB(id string) (models.League, error
 		for rows.Next() {
 			team := models.Team{}
 			team.Players = []models.Player{} // init empty value
-			err = rows.Scan(&team.ID, &team.Name, &team.Owner, &team.League_ID); if err != nil {
+			err = rows.Scan(&team.ID, &team.Name, &team.Owner, &team.League_ID)
+			if err != nil {
 				util.ErrorLog.Println("Was able to fetch the league, choked on an individual team", err)
 				return retrieved_league, err
 			}

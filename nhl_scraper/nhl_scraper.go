@@ -17,13 +17,20 @@ func add_player_to_db(player api.Player_resp, team_code string) {
 	wrapped_player := models.Player{
 		ID:            player.ID,
 		NHL_Team_Code: team_code,
+		NHL_Team_Name: api.GetTeamNameByTricode(team_code),
+		Photo:         player.Photo,
 		Name:          player.FirstName.Value + string(' ') + player.LastName.Value,
 		Position:      player.Position,
 		Salary:        0, // NOTE: we need to pull this in eventually, but let's init empty
 	}
 
-	var generated_id int = service.AddPlayer(wrapped_player)
+	generated_id, err := service.AddPlayer(wrapped_player)
+	if err != nil {
+		util.ErrorLog.Println("Could not insert", wrapped_player.Name, "of the", wrapped_player.NHL_Team_Name)
+		return
+	}
 	util.InfoLog.Println("Successfully Inserted", generated_id)
+
 }
 
 func get_roster_by_team_tricode(team_tricode string) {
@@ -43,7 +50,7 @@ func get_roster_by_team_tricode(team_tricode string) {
 	var team_response api.Roster_resp
 	err = json.Unmarshal(team_data, &team_response)
 	if err != nil {
-		util.ErrorLog.Println("THROWING THIS ERROR", err)
+		util.ErrorLog.Println("Unable to fetch team for this tricode:", team_tricode)
 		return
 	}
 	util.InfoLog.Println("Here's the roster for ", team_tricode)

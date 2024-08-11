@@ -10,8 +10,10 @@ LABEL maintainer="Rcain"
 WORKDIR /app
 
 # Copy go mod and sum files
-COPY go.mod go.sum ./
+COPY go.mod go.sum  ./
 
+# see if we can send up some local data with our deployment?
+COPY gockey.db gockey.db
 # Download all dependencies. Dependencies will be cached if the go.mod and go.sum files are not changed
 RUN go mod download
 

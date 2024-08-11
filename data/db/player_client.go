@@ -9,9 +9,9 @@ import (
 )
 
 func (curs *DatabaseCursor) AddPlayerToDB(player models.Player) (int, error) {
-	res, err := curs.db.Exec("INSERT INTO players (id, name, image_url, position, nhl_team_code, nhl_team_name, salary)VALUES(?,?,?,?,?)", player.ID, player.Photo, player.Name, player.Position, player.NHL_Team_Code, player.NHL_Team_Name, player.Salary)
+	res, err := curs.db.Exec("INSERT INTO players (id, name, photo, position, nhl_team_code, salary)VALUES(?,?,?,?,?,?)", player.ID, player.Name, player.Photo, player.Position, player.NHL_Team_Code, player.Salary)
 	if err != nil {
-		util.ErrorLog.Println("Unable to insert player into table")
+		util.ErrorLog.Println("Unable to insert player into table", err)
 		return 0, err
 	}
 
@@ -25,8 +25,7 @@ func (curs *DatabaseCursor) AddPlayerToDB(player models.Player) (int, error) {
 }
 
 func (curs *DatabaseCursor) GetPlayersFromDB(offset int) ([]models.Player, error) {
-	rows, err := curs.db.Query(
-		"SELECT * FROM players WHERE ID > ? ORDER BY id DESC LIMIT 100", offset)
+	rows, err := curs.db.Query("SELECT * FROM players WHERE ID > ? ORDER BY id DESC LIMIT 100", offset)
 	if err != nil {
 		util.ErrorLog.Println("Unable to fetch all players")
 		return nil, err
@@ -38,14 +37,15 @@ func (curs *DatabaseCursor) GetPlayersFromDB(offset int) ([]models.Player, error
 		retrieved_player := models.Player{}
 		err = rows.Scan(
 			&retrieved_player.ID,
-			&retrieved_player.Photo,
 			&retrieved_player.Name,
+			&retrieved_player.Photo,
 			&retrieved_player.Position,
 			&retrieved_player.NHL_Team_Code,
 			&retrieved_player.NHL_Team_Name,
 			&retrieved_player.Salary,
 		)
 		if err != nil {
+			util.ErrorLog.Println("Unable to marshall players from db", err)
 			return nil, err
 		}
 		players = append(players, retrieved_player)

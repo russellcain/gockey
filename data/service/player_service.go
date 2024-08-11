@@ -28,14 +28,15 @@ func GetPlayerById(id string) (models.Player, error) {
 	return player, nil
 }
 
-func AddPlayer(newPlayer models.Player) int {
+func AddPlayer(newPlayer models.Player) (int, error) {
 	util.InfoLog.Println("Adding player to database")
 	// Method to add a player to the existing collection of player data
 	// TODO: this would also be a call to a persistent db layer via service call
 	id, err := db_client.AddPlayerToDB(newPlayer)
 	if err != nil {
-		util.ErrorLog.Println("service layer ack of inability to add player")
+		util.ErrorLog.Println("service layer ack of inability to add player", err)
+		return 0, err
 	}
 	util.InfoLog.Println("Successfully added newPlayer: ", id)
-	return id
+	return id, nil
 }

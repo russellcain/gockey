@@ -92,6 +92,7 @@ var TriCodeToTeamName map[string]string = map[string]string{
 	"WPG": "Washington Capitals",
 	"WSH": "Winnipeg Jets",
 }
+
 func GetTeamNameByTricode(tricode string) string {
-	return tricode
+	return TriCodeToTeamName[tricode]
 }

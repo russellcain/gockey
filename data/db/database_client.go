@@ -28,6 +28,7 @@ func GetInitializedDBClient() (*DatabaseCursor, error) {
 		errors := db_client.InitializeReqTables()
 		if len(errors) > 0 {
 			// figure out if this should ever be a show stopper? we might never need to surface errs
+			util.ErrorLog.Println("DB INIT TABLES ERRORS", errors)
 			return db_client, nil
 		}
 	}
@@ -51,9 +52,11 @@ func (curs *DatabaseCursor) InitializeReqTables() []error {
 		_, err := curs.db.Exec(init_script.Script)
 		if err != nil {
 			util.ErrorLog.Println("Could not intialize:", init_script.Label)
+			util.ErrorLog.Println("\terror:", err)
 			error_list = append(error_list, err) // this allows us to initialize as many tables as we can?
+		} else {
+			util.InfoLog.Println(init_script.Label, "is ready to get humming")
 		}
-		util.InfoLog.Println(init_script.Label, "is ready to get humming")
 	}
 	if len(error_list) != 0 {
 		return error_list
