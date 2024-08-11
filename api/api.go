@@ -3,68 +3,74 @@ package api
 import (
 	"fmt"
 
-	"github.com/gin-gonic/gin"
 	"net/http"
 
-	"github.com/gockey/data"
-	"github.com/gockey/data/models"
-	"github.com/gockey/nhl_scraper"
+	"github.com/gin-gonic/gin"
+
+	"github.com/gockey/service"
 	"github.com/gockey/util"
 )
 
-func scrape(c *gin.Context) {
-	nhl_scraper.GetAPI()
-	c.Status(http.StatusNoContent)
-}
-
-func getPlayers(c *gin.Context) {
+func GetPlayers(c *gin.Context) {
 	// Method to handle and return http-ready player data.
 	// TODO: the `players` value will be replaced by a service-level data collection response
-	util.InfoLog.Println("GET Request for /players")
-	players, err := data.GetPlayers()
+	players, err := service.GetPlayers()
 	if err != nil {
 		util.ErrorLog.Println("Unable to retrieve player by id")
-		c.IndentedJSON(http.StatusNotFound, gin.H{"message": fmt.Sprintf("Cannot List Players")})
+		c.IndentedJSON(http.StatusNotFound, gin.H{"message": "Cannot List Players"})
 		return
 	}
 	c.IndentedJSON(http.StatusOK, players)
-	return
 }
 
-func getPlayerById(c *gin.Context) {
+func GetPlayerById(c *gin.Context) {
 	id := c.Param("id")
-	player, err := data.GetPlayerById(id)
+	player, err := service.GetPlayerById(id)
 	if err != nil {
 		util.ErrorLog.Println("Unable to retrieve player by id")
 		c.IndentedJSON(http.StatusNotFound, gin.H{"message": fmt.Sprintf("Player not found with id: %s", id)})
 		return
 	}
 	c.IndentedJSON(http.StatusOK, player)
-	return
 }
 
-func postPlayers(c *gin.Context) {
-	util.InfoLog.Println("GET Request for /players")
-	// Method to add a player to the existing collection of player data
-	// TODO: this would also be a call to a persistent db layer via service call
-
-	/* EX:
-	curl http://localhost:2424/players \
-	--include \
-	--header "Content-Type: application/json" \
-	--request "POST" \
-	--data '{"name": "William Nylander", "position": "F", "nhl_team_id": "TOR", "salary": 11500000}'
-	*/
-
-	var newPlayer models.Player
-
-	// Call BindJSON to bind the received JSON to newPlayer -- verify it is of `player` shape
-	if err := c.BindJSON(&newPlayer); err != nil {
-		util.ErrorLog.Println("Unable to marshall this request into a player struct")
+func GetLeagues(c *gin.Context) {
+	// Method to handle and return http-ready player data.
+	// TODO: the `players` value will be replaced by a service-level data collection response
+	players, err := service.GetLeagues()
+	if err != nil {
+		util.ErrorLog.Println("Unable to retrieve player by id")
+		c.IndentedJSON(http.StatusNotFound, gin.H{"message": "Cannot List Leagues"})
 		return
 	}
+	c.IndentedJSON(http.StatusOK, players)
+}
 
-	new_id := data.AddPlayer(newPlayer)
-	util.InfoLog.Println("Successfully added new player: ", new_id)
-	c.IndentedJSON(http.StatusCreated, new_id)
+/*
+This is equivalent to a getting a league by id
+*/
+func GetTeams(c *gin.Context) {
+	// Method to handle and return http-ready player data.
+	// TODO: the `players` value will be replaced by a service-level data collection response
+	util.InfoLog.Println("GET Request for /teams")
+	id := c.Param("league_id")
+	teams, err := service.GetLeagueById(id)
+	if err != nil {
+		util.ErrorLog.Println("Unable to retrieve teams for league id", id)
+		c.IndentedJSON(http.StatusNotFound, gin.H{"message": "Cannot List Teams"})
+		return
+	}
+	c.IndentedJSON(http.StatusOK, teams)
+}
+
+func GetTeamById(c *gin.Context) {
+	team_id := c.Param("team_id")
+	league_id := c.Param("league_id")
+	team, err := service.GetTeamById(team_id, league_id)
+	if err != nil || team.ID == "" {
+		util.ErrorLog.Println("Unable to retrieve team by id")
+		c.IndentedJSON(http.StatusNotFound, gin.H{"message": fmt.Sprintf("Team not found with id: %s in league: %s", team_id, league_id)})
+		return
+	}
+	c.IndentedJSON(http.StatusOK, team)
 }

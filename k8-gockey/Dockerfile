@@ -8,7 +8,7 @@ COPY go.sum .
 # RUN go mod tidy -e
 RUN go mod download
 COPY . .
-RUN CGO_ENABLED=0 GOOS=linux go build -o /main main.go
+RUN CGO_ENABLED=1 GOOS=linux go build -o /main main.go
 FROM alpine:3
 COPY --from=builder main /bin/main
 ENTRYPOINT ["/bin/main"]
