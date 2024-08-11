@@ -15,4 +15,4 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     - name: Build the Docker image on Github
-      run: docker build . --file Dockerfile --tag rustycain/gockey-server:$(date +%s) && push rustycain/gockey-server:$(date +%s)
+      run: docker build . --file Dockerfile --tag rustycain/gockey-server:$(date +%s) && docker push rustycain/gockey-server:$(date +%s)
