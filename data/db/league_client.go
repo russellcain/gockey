@@ -2,7 +2,6 @@ package db
 
 import (
 	"database/sql"
-	"fmt"
 
 	"github.com/gockey/data/models"
 	"github.com/gockey/util"
@@ -77,7 +76,6 @@ func (curs *DatabaseCursor) GetLeagueByIdFromDB(id string) (models.League, error
 			teams = append(teams, team)
 		}
 		retrieved_league.Teams = teams
-		fmt.Println("LOOK WE GOT ALL THE TEAMS?", teams)
 		return retrieved_league, nil
 
 	default:

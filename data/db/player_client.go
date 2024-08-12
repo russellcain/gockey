@@ -61,8 +61,8 @@ func (curs *DatabaseCursor) GetPlayerByIdFromDB(id string) (models.Player, error
 	row := curs.db.QueryRow(sqlStatement, id)
 	switch err := row.Scan(
 		&retrieved_player.ID,
-		&retrieved_player.Photo,
 		&retrieved_player.Name,
+		&retrieved_player.Photo,
 		&retrieved_player.Position,
 		&retrieved_player.NHL_Team_Code,
 		&retrieved_player.NHL_Team_Name,

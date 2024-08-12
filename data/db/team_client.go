@@ -79,7 +79,7 @@ func (curs *DatabaseCursor) GetTeamByIdFromDB(team_id string, league_id string) 
 	players := []models.Player{}
 	for rows.Next() {
 		player := models.Player{}
-		err = rows.Scan(&player.ID, &player.Photo, &player.Name, &player.Position, &player.NHL_Team_Code, &player.NHL_Team_Name, &player.Salary) // don't include players here
+		err = rows.Scan(&player.ID, &player.Name, &player.Photo, &player.Position, &player.NHL_Team_Code, &player.NHL_Team_Name, &player.Salary) // don't include players here
 		if err != nil {
 			// then bail early and just show the data we have (not ideal)
 			return retrieved_team, err
