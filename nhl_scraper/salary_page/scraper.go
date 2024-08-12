@@ -98,22 +98,22 @@ func main() {
 
 	// called before an HTTP request is triggered
 	c.OnRequest(func(r *colly.Request) {
-		fmt.Println("Visiting: ", r.URL)
+		// fmt.Println("Visiting: ", r.URL)
 	})
 
 	// triggered when the scraper encounters an error
 	c.OnError(func(_ *colly.Response, err error) {
-		fmt.Println("Something went wrong: ", err)
+		// fmt.Println("Something went wrong: ", err)
 	})
 
 	// fired when the server responds
 	c.OnResponse(func(r *colly.Response) {
-		fmt.Println("Page visited: ", r.Request.URL)
+		// fmt.Println("Page visited: ", r.Request.URL)
 	})
 
 	// triggered once scraping is done (e.g., write the data to a CSV file)
 	c.OnScraped(func(r *colly.Response) {
-		fmt.Println(r.Request.URL, " scraped!")
+		// fmt.Println(r.Request.URL, " scraped!")
 	})
 
 	c.OnHTML(".form-select", func(drop_down *colly.HTMLElement) {

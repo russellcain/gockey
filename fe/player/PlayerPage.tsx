@@ -38,7 +38,6 @@ class PlayerPage extends React.Component<IProps, IState> {
     render() {
         return(
             <div>
-                Welcome to the player page! Click into a player to see their full stats:
                 {
                     this.state.players ?
                         <PlayerTable players={this.state.players} onSelect={this.handlePlayer} />

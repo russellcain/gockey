@@ -35,28 +35,25 @@ async function getPlayerById(id: number): Promise<Player> {
         })
 }
 
-async function getLeagues(): Promise<League> {
+async function getLeagues(): Promise<League[]> {
     return fetch(get_request(`${URL_BASE}/leagues`))
         .then(res => res.json())
         .then(res => {
-            return res as League
+            return res as League[]
         })
 }
 
 async function getTeams(league_id: number): Promise<Team[]> {
-    return fetch(get_request(`${URL_BASE}/league/${league_id}`))
+    return fetch(get_request(`${URL_BASE}/league/${league_id}/teams`))
         .then(res => res.json())
-        .then(res => {
-            return res as Team[]
-        })
+        .then(res => res as League)
+        .then(res => res.teams)
 }
 
 async function getTeamById(league_id: number, team_id: number): Promise<Team> {
     return fetch(get_request(`${URL_BASE}/league/${league_id}/teams/${team_id}`))
         .then(res => res.json())
-        .then(res => {
-            return res as Team
-        })
+        .then(res => res as Team)
 }
 
 export {

@@ -1,21 +1,22 @@
 import * as React from 'react';
 import {
   createBrowserRouter,
-  RouteObject,
 } from "react-router-dom";
+
+// internal components
 import PlayerPage from '../player/PlayerPage';
+import LeaguePage from '../league/LeaguePage';
+
+// mui
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
-import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
-import Menu from '@mui/material/Menu';
-import MenuIcon from '@mui/icons-material/Menu';
 import Container from '@mui/material/Container';
 import Button from '@mui/material/Button';
-import MenuItem from '@mui/material/MenuItem';
 import SnowflakeIcon from '@mui/icons-material/AcUnit';
 
+// constants
 import Color from "../constants/colors";
 import GH_REF from "../constants/github_href";
 
@@ -34,7 +35,7 @@ const pages: PageObject[] = [
   {
     label: "View Leagues",
     path: '/league',
-    page_to_show: <h1>Welcome to the league page</h1>
+    page_to_show: <LeaguePage />
     },
   {
     label: "Active Players",

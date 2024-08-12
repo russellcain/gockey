@@ -1,0 +1,44 @@
+.Column {
+  float: left;
+  height: 300px;
+}
+
+.Wrapper {
+    /* background-color: red; */
+    border: 10%;
+    padding: 10%;
+}
+
+.left {
+  width: 10%;
+
+}
+
+.middle {
+  width: 10%;
+}
+
+.right {
+    width: 60%;
+    background-color: white
+}
+
+.Entry {
+    background-color: azure;
+    padding: 5%;
+}
+
+.selected {
+    background-color: darkolivegreen;
+}
+
+.Entry:hover {
+    background-color: cadetblue;
+}
+
+/* Clear floats after the columns */
+.Row:after {
+  content: "";
+  display: table;
+  clear: both;
+}
