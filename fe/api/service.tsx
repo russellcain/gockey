@@ -51,7 +51,7 @@ async function getTeams(league_id: number): Promise<Team[]> {
 }
 
 async function getTeamById(league_id: number, team_id: number): Promise<Team> {
-    return fetch(get_request(`${URL_BASE}/league/${league_id}/teams/${team_id}`))
+    return fetch(get_request(`${URL_BASE}/league/${league_id}/team/${team_id}`))
         .then(res => res.json())
         .then(res => res as Team)
 }

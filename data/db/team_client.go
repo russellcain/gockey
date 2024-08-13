@@ -9,19 +9,19 @@ import (
 )
 
 func (curs *DatabaseCursor) AddTeamToDB(team models.Team) (int, error) {
-	res, err := curs.db.Exec("INSERT INTO teams VALUES(?,?,?,?,?)", team.ID, team.Name, team.Owner, team.League_ID)
+	res, err := curs.db.Exec("INSERT INTO teams (name, league_id) VALUES(?,?)", team.Name, team.League_ID)
 	if err != nil {
-		util.ErrorLog.Println("Unable to insert team into table")
-		return 0, err
+		util.ErrorLog.Println("Unable to insert team into table", err)
+		return -1, err
 	}
 
-	var id int64
-	if id, err = res.LastInsertId(); err != nil {
+	var new_id int64
+	if new_id, err = res.LastInsertId(); err != nil {
 		util.ErrorLog.Println("Unable to retrieve generated guid for new team row?")
-		return 0, err
+		return -1, err
 	}
 
-	return int(id), nil
+	return int(new_id), nil
 }
 
 func (curs *DatabaseCursor) GetTeamsFromDatabase(league_id int) ([]models.Team, error) {
@@ -48,6 +48,20 @@ func (curs *DatabaseCursor) GetTeamsFromDatabase(league_id int) ([]models.Team, 
 
 // this view should include the players on the team, and requires a league id
 func (curs *DatabaseCursor) GetTeamByIdFromDB(team_id string, league_id string) (models.Team, error) {
+	/*
+		- self join on player id
+		- correlated subquery
+			- team joins to (players joined ref_table where players.status)
+				--> using current state (i.e. teams) to subset the history table
+				 SELECT employee_number,
+						name,
+						(SELECT status
+							FROM employees
+							WHERE department = emp.department
+							order by event_time desc
+							limit 1) AS player_status
+				FROM employees emp
+	*/
 	const fetchTeamQuery string = `SELECT * FROM teams WHERE id=$1 and league_id=$2;`
 	const fetchPlayersQuery string = `
 		SELECT p.* FROM players p
@@ -55,7 +69,7 @@ func (curs *DatabaseCursor) GetTeamByIdFromDB(team_id string, league_id string) 
 		on p.id == tpr.player_id
 		where tpr.team_id=$1
 		and tpr.league_id=$2
-		and status='active';`
+		and status='added';` // TODO: Update this query to pull the max timestamp and then filter down to active..
 
 	retrieved_team := models.Team{}
 	row := curs.db.QueryRow(fetchTeamQuery, team_id, league_id)

@@ -11,7 +11,7 @@ var (
 	ErrorLog   *log.Logger
 )
 
-const LOG_FILE_PATH string = "nhl_scraping_logs.txt"
+const LOG_FILE_PATH string = "gockey_logs.txt"
 
 func init() {
 	f, err := os.Create(LOG_FILE_PATH)
