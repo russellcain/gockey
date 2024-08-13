@@ -77,3 +77,32 @@ func (curs *DatabaseCursor) GetPlayerByIdFromDB(id string) (models.Player, error
 		return models.Player{}, err
 	}
 }
+
+func (curs *DatabaseCursor) AddPlayerToTeamInRefDB(league_id string, team_id string, player_id string) error {
+	_, err := curs.db.Exec("INSERT INTO ref_table (league_id, team_id, player_id, status)VALUES(?,?,?,?)", league_id, team_id, player_id, "added")
+	if err != nil {
+		util.ErrorLog.Println("Unable to insert player into table", err)
+		return err
+	}
+
+	return nil
+}
+
+func (curs *DatabaseCursor) RemovePlayerFromTeamInRefDB(league_id string, team_id string, player_id string) error {
+	_, err := curs.db.Exec("INSERT INTO ref_table (league_id, team_id, player_id, status)VALUES(?,?,?,?)", league_id, team_id, player_id, "removed")
+	if err != nil {
+		util.ErrorLog.Println("Unable to insert player into table", err)
+		return err
+	}
+
+	return nil
+}
+
+// does a check on a given player's id within a league (in ref_table) and sees if the active status is the most recent
+func (curs *DatabaseCursor) IsPlayerOnTeamInGivenLeague(league_id string, player_id string) (bool, error) {
+	row := curs.db.QueryRow("SELECT status, player_id from ref_table where league_id=? and player_id=? order by create_date desc;", league_id, player_id)
+	var refTableObj models.RefTable = models.RefTable{}
+	err := row.Scan(&refTableObj.Status, &refTableObj.PlayerID)
+
+	return nil
+}

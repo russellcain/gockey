@@ -1,0 +1,23 @@
+-- This list was generated using a python script against the populated db and rest api
+INSERT INTO ref_table (league_id, team_id, player_id, status) VALUES
+    (2, 22, 8484911, 'removed'),
+    (1, 2, 8484304, 'removed'),
+    (3, 8, 8484287, 'removed'),
+    (2, 31, 8484268, 'removed'),
+    (4, 32, 8482684, 'removed'),
+    (1, 27, 8482671, 'removed'),
+    (4, 11, 8482667, 'removed'),
+    (2, 21, 8482465, 'removed'),
+    (2, 31, 8482460, 'removed'),
+    (4, 23, 8482445, 'removed'),
+    (1, 27, 8482259, 'removed'),
+    (3, 24, 8482245, 'removed'),
+    (1, 26, 8482142, 'removed'),
+    (1, 3, 8482138, 'removed'),
+    (2, 31, 8482133, 'removed'),
+    (2, 10, 8482132, 'removed'),
+    (3, 25, 8482125, 'removed'),
+    (2, 10, 8482124, 'removed'),
+    (4, 11, 8482122, 'removed'),
+    (3, 6, 8482118, 'removed'),
+    (1, 26, 8482116, 'removed');

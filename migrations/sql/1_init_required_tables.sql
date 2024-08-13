@@ -22,11 +22,12 @@ CREATE TABLE IF NOT EXISTS players (
 );
 
 CREATE TABLE IF NOT EXISTS ref_table (
+    id STRING NOT NULL PRIMARY KEY, -- `{league_id}_{team_id}_{player_id}`
     league_id INTEGER NOT NULL,
     team_id INTEGER NOT NULL,
     player_id INTEGER NOT NULL,
-    status VARCHAR(40) DEFAULT ('active'),
-    create_date TEXT DEFAULT (datetime()),
+    status VARCHAR(40) NOT NULL DEFAULT ('added'),
+    event_datetime TEXT DEFAULT (datetime()),
     FOREIGN KEY(league_id) REFERENCES leagues(id),
     FOREIGN KEY(team_id) REFERENCES teams(id),
     FOREIGN KEY(player_id) REFERENCES players(id)

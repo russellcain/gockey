@@ -27,7 +27,19 @@ var Routes = []RouteMethod{
 		Method: GetTeams,
 	},
 	{
-		Route:  "/league/:league_id/teams/:team_id",
+		Route:  "/league/:league_id/_add/:team_name",
+		Method: AddTeam,
+	},
+	{
+		Route:  "/league/:league_id/team/:team_id/_add/:player_id",
+		Method: AddPlayerToTeam,
+	},
+	{
+		Route:  "/league/:league_id/team/:team_id/_remove/:player_id",
+		Method: AddPlayerToTeam,
+	},
+	{
+		Route:  "/league/:league_id/team/:team_id",
 		Method: GetTeamById,
 	},
 }

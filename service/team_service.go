@@ -22,14 +22,15 @@ func GetTeamById(team_id string, league_id string) (models.Team, error) {
 	return team, nil
 }
 
-func AddTeam(newTeam models.Team) int {
-	util.InfoLog.Println("Adding player to database")
+func AddTeam(newTeam models.Team) (int, error) {
+	util.InfoLog.Println("Adding team to database")
 	// Method to add a player to the existing collection of player data
 	// TODO: this would also be a call to a persistent db layer via service call
-	id, err := db_client.AddTeamToDB(newTeam)
+	generated_id, err := db_client.AddTeamToDB(newTeam)
 	if err != nil {
-		util.ErrorLog.Println("service layer ack of inability to add team")
+		util.ErrorLog.Println("service layer ack of inability to add team", err)
+		return -1, err
 	}
-	util.InfoLog.Println("Successfully added newTeam: ", id)
-	return id
+	util.InfoLog.Println("Successfully added newTeam: ", generated_id)
+	return generated_id, nil
 }
