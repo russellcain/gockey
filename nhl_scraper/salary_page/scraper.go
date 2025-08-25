@@ -1,143 +1,148 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
-	"time"
+	"log"
+	"os"
+	"strings"
 
-	// importing Colly
 	"github.com/gocolly/colly"
+	"golang.org/x/text/cases"
+	"golang.org/x/text/language"
 )
 
-/*
-HELPER TEXT: https://benjamincongdon.me/blog/2018/03/01/Scraping-the-Web-in-Golang-with-Colly-and-Goquery/
-*/
+// Player represents a single player's data
+type Player struct {
+	Name         string `json:"name"`
+	Age          string `json:"age"`
+	Pos          string `json:"pos"`
+	SalaryCapHit string `json:"salary_cap_hit"`
+	Team         string `json:"team"`
+}
 
 var PAGES_TO_VISIT []string = []string{
-	"buffalo-sabres",
-	"boston-bruins",
-	"detroit-red-wings",
-	"florida-panthers",
-	"montreal-canadiens",
-	"ottawa-senators",
-	"tampa-bay-lightning",
-	"toronto-maple-leafs",
-	"columbus-blue-jackets",
-	"carolina-hurricanes",
-	"new-jersey-devils",
-	"new-york-islanders",
-	"new-york-rangers",
-	"philadelphia-flyers",
-	"pittsburgh-penguins",
-	"washington-capitals",
-	"colorado-avalanche",
-	"chicago-blackhawks",
-	"dallas-stars",
-	"minnesota-wild",
-	"nashville-predators",
-	"st-louis-blues",
-	"utah-hockey-club",
-	"winnipeg-jets",
-	"anaheim-ducks",
-	"calgary-flames",
-	"edmonton-oilers",
-	"los-angeles-kings",
-	"san-jose-sharks",
-	"seattle-kraken",
-	"vancouver-canucks",
-	"vegas-golden-knights",
+	"buffalo_sabres",
+	"boston_bruins",
+	"detroit_red_wings",
+	"florida_panthers",
+	"montreal_canadiens",
+	"ottawa_senators",
+	"tampa_bay_lightning",
+	"toronto_maple_leafs",
+	"columbus_blue_jackets",
+	"carolina_hurricanes",
+	"new_jersey_devils",
+	"new_york_islanders",
+	"new_york_rangers",
+	"philadelphia_flyers",
+	"pittsburgh_penguins",
+	"washington_capitals",
+	"colorado_avalanche",
+	"chicago_blackhawks",
+	"dallas_stars",
+	"minnesota_wild",
+	"nashville_predators",
+	"st_louis_blues",
+	"utah_mammoth",
+	"winnipeg_jets",
+	"anaheim_ducks",
+	"calgary_flames",
+	"edmonton_oilers",
+	"los_angeles_kings",
+	"san_jose_sharks",
+	"seattle_kraken",
+	"vancouver_canucks",
+	"vegas_golden_knights",
 }
 
-const DOMAIN string = "www.spotrac.com"
+const DOMAIN string = "capwages.com"
 
-var NHL_BASE_PAGE string = fmt.Sprintf("https://%s/nhl", DOMAIN)
-var NHL_TEAM_PAGE string = fmt.Sprintf("%s/contracts", NHL_BASE_PAGE)
+var NHL_BASE_PAGE string = fmt.Sprintf("https://%s", DOMAIN)
 
 func get_team_salary_page(team_string string) string {
-	return fmt.Sprintf("%s/%s/yearly/_/sort/cap_total/view/roster", NHL_BASE_PAGE, team_string)
+	return fmt.Sprintf("%s/teams/%s", NHL_BASE_PAGE, team_string)
 }
 
-/*
-This match is where we have weakness; the salary data is not tied into the nhl endpoint and
-therefore we need to ~ascertain~ which player in our db this matches to vs update via pkid
-So I *think* uniqueness will be found in a combination of:
-  - Player Name
-  - Player Team
+func get_capitalized_team_name(raw_team_name string) string {
+	caser := cases.Title(language.English)
+	return caser.String(strings.ReplaceAll(raw_team_name, "_", " "))
+}
 
-It would make more sense for jersey number and team to be the most accurate, but some of
-that data might be a mess because rookies/AHL players dont have a number just yet.
-*/
-func contract_row_to_player() {
+func get_capitalized_player_name(raw_player_name string) string {
+	fmt.Println("FOMRATING THIS NAME", raw_player_name)
+	if strings.Contains(raw_player_name, ",") {
+		name_parts := strings.Split(raw_player_name, ", ")
+		return fmt.Sprintf("%s %s", name_parts[1], name_parts[0])
+	}
+	return raw_player_name
+}
+
+func get_simple_position(raw_position_csv string) string {
+	fmt.Println("FOMRATING THIS Position", raw_position_csv)
+	if strings.Contains(raw_position_csv, "G") {
+		return raw_position_csv
+	} else if strings.Contains(raw_position_csv, "D") {
+		return "D"
+	} else {
+		return "F"
+	}
 
 }
 
-type TeamPage struct {
-}
-
-/*
-This function will first go to the spotrac page and pull down their list of teams
-  - i.e. 'TOR Maple Leafs' --> 'toronto-maple-leafs' in the url
-
-then it will iterate across these teams and pull down the roster per team using:
-  - `https://www.spotrac.com/nhl/<team-name>/yearly/_/sort/cap_total/view/roster`
-*/
 func main() {
+	// Create a new collector
+	c := colly.NewCollector()
 
-	// instantiate a new collector object
-	c := colly.NewCollector(
-		colly.AllowedDomains(DOMAIN),
-	)
+	// Slice to hold the players
+	var players []Player
+	var currentTeam string
 
-	c.Limit(&colly.LimitRule{
-		// Filter domains affected by this rule
-		DomainGlob: fmt.Sprintf("%s/*", DOMAIN),
-		// Set a delay between requests to these domains
-		Delay: 1 * time.Second,
-		// Add an additional random delay
-		RandomDelay: 1 * time.Second,
-	})
-
-	// called before an HTTP request is triggered
-	c.OnRequest(func(r *colly.Request) {
-		// fmt.Println("Visiting: ", r.URL)
-	})
-
-	// triggered when the scraper encounters an error
-	c.OnError(func(_ *colly.Response, err error) {
-		// fmt.Println("Something went wrong: ", err)
-	})
-
-	// fired when the server responds
-	c.OnResponse(func(r *colly.Response) {
-		// fmt.Println("Page visited: ", r.Request.URL)
-	})
-
-	// triggered once scraping is done (e.g., write the data to a CSV file)
-	c.OnScraped(func(r *colly.Response) {
-		// fmt.Println(r.Request.URL, " scraped!")
-	})
-
-	c.OnHTML(".form-select", func(drop_down *colly.HTMLElement) {
-		// Now we need to look into the team dropdowns and see if we can get the href?
-		// fmt.Println("hit a match", drop_down.Name)
-		// if drop_down.Attr("name") == "team" {
-		// 	fmt.Printf("But now hit a super match")
-		// 	drop_down.ForEach("option", func(_ int, elem *colly.HTMLElement) {
-		// 		for _, node := range elem.DOM.Nodes {
-		// 			fmt.Println("\tATTR", node.Attr)
-		// 		}
-		// 		fmt.Println(elem.Text)
-		// 	})
-
-		// }
-
-	})
-
-	c.OnHTML(".dropdown-menu", func(drop_down *colly.HTMLElement) {
-		fmt.Println("hit a match", drop_down.Name)
-		for _, node := range drop_down.DOM.Nodes {
-			fmt.Println("\tATTR", node.Attr)
+	// Find and visit all table rows
+	c.OnHTML("table.teamProfileRosterSection__table tbody tr", func(e *colly.HTMLElement) {
+		player := Player{}
+		player.Name = get_capitalized_player_name(e.ChildText("td:nth-child(1) a"))
+		player.Age = e.ChildText("td:nth-child(7)")
+		player.Pos = get_simple_position(e.ChildText("td:nth-child(4)"))
+		player.Team = get_capitalized_team_name(currentTeam)
+		allSals := strings.Split(e.ChildText("td:nth-child(10) div"), "$")
+		if e.ChildText("td:nth-child(5)") == "Retired" {
+			return
 		}
+		if allSals[0] == "RFA" || allSals[0] == "UFA" {
+			return // we don't care about this player right now. go get paid, buddy
+		} else if len(allSals) == 0 {
+			return
+		} else {
+			player.SalaryCapHit = allSals[1]
+			players = append(players, player)
+		}
+		fmt.Println("player:", player)
 	})
 
-	c.Visit(NHL_TEAM_PAGE)
+	// Before visiting, log the URL
+	c.OnRequest(func(r *colly.Request) {
+		fmt.Println("Visiting", r.URL.String())
+	})
+	for _, team := range PAGES_TO_VISIT {
+		currentTeam = team
+		url_to_visit := get_team_salary_page(team)
+		err := c.Visit(url_to_visit)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		// Convert the players slice to JSON and print it
+		enc := json.NewEncoder(os.Stdout)
+		enc.SetIndent("", "  ")
+		enc.Encode(players)
+	}
+	jsonString, _ := json.Marshal(players)
+	err := os.WriteFile("player-salaries.json", jsonString, 0644) // 0644 for readable by all, writable by owner
+	if err != nil {
+		panic(err) // Handle error appropriately
+	}
+
+	println("JSON file written successfully!")
+
 }
