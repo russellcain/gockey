@@ -1,1 +1,0 @@
-export default "https://github.com/russellcain/gockey/tree/main"
